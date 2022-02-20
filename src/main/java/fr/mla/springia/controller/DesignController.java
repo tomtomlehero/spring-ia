@@ -6,13 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static fr.mla.springia.model.Ingredient.*;
+import static fr.mla.springia.model.Ingredient.Type;
 
 @Slf4j
 @Controller
@@ -20,7 +21,7 @@ import static fr.mla.springia.model.Ingredient.*;
 public class DesignController {
 
     @GetMapping
-    public String design(Model model) {
+    public String showDesignForm(Model model) {
 
         List<Ingredient> ingredients = Arrays.asList(
                 new Ingredient("FLTO", "Flour Tortilla", Type.WRAP),
@@ -39,9 +40,15 @@ public class DesignController {
             model.addAttribute(type.name().toLowerCase(), filterByType(ingredients, type));
         }
 
-        model.addAttribute("design", new Taco());
         return "design";
     }
+
+    @PostMapping
+    public String processForm(Taco taco) {
+        log.info("Processing Design " + taco);
+        return "redirect:/orders/current";
+    }
+
 
     private List<Ingredient> filterByType(List<Ingredient> ingredients, Type type) {
         return ingredients.stream().filter(ingredient -> ingredient.getType() == type).collect(Collectors.toList());
